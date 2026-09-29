@@ -32,14 +32,21 @@ GuessTheWorld brings the classic word deduction game into a multi-user web archi
 
 ## Quickstart
 
-### 1. Setup Database
+### 1. Install Deps
+Grab the required packages:
+
+```bash
+pip install -r requirements.txt
+```
+
+### 2. Setup Database
 Initial seed data (words and default accounts) is provisioned automatically upon migration.
 
 ```bash
 python manage.py migrate
 ```
 
-### 2. Launch Development Server
+### 3. Launch Development Server
 
 ```bash
 python manage.py runserver
