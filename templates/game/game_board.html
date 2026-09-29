@@ -1,0 +1,285 @@
+{% extends "base.html" %}
+
+{% block title %}Game #{{ session.id }}{% endblock %}
+
+{% block content %}
+<div class="game-container">
+  <div class="game-header">
+    <a href="{% url 'dashboard' %}" class="btn btn-outline" style="padding: 0.4rem 0.85rem; font-size: 0.85rem;">
+      Back to Dashboard
+    </a>
+    <div style="font-weight: 700; font-size: 1rem; color: var(--text-main);">
+      {% if session.status == 'WON' %}
+        <span class="badge badge-green">Won ({{ session.attempts_used }}/{{ session.max_attempts }})</span>
+      {% elif session.status == 'LOST' %}
+        <span class="badge badge-grey">Lost - Word: {{ session.target_word }}</span>
+      {% else %}
+        Attempt: <span id="attemptDisplay">{{ session.attempts_used }}</span> / {{ session.max_attempts }}
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="board-grid" id="boardGrid">
+    {% for row in grid_rows %}
+      <div class="board-row" data-row="{{ forloop.counter0 }}">
+        {% for tile in row %}
+          <div class="tile {% if tile.status != 'empty' %}tile-{{ tile.status }}{% endif %}" data-col="{{ forloop.counter0 }}" data-status="{{ tile.status }}">
+            {{ tile.letter }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endfor %}
+  </div>
+
+  <div class="virtual-keyboard" id="virtualKeyboard">
+    <div class="keyboard-row">
+      <button type="button" class="key-btn" data-key="Q">Q</button>
+      <button type="button" class="key-btn" data-key="W">W</button>
+      <button type="button" class="key-btn" data-key="E">E</button>
+      <button type="button" class="key-btn" data-key="R">R</button>
+      <button type="button" class="key-btn" data-key="T">T</button>
+      <button type="button" class="key-btn" data-key="Y">Y</button>
+      <button type="button" class="key-btn" data-key="U">U</button>
+      <button type="button" class="key-btn" data-key="I">I</button>
+      <button type="button" class="key-btn" data-key="O">O</button>
+      <button type="button" class="key-btn" data-key="P">P</button>
+    </div>
+    <div class="keyboard-row">
+      <button type="button" class="key-btn" data-key="A">A</button>
+      <button type="button" class="key-btn" data-key="S">S</button>
+      <button type="button" class="key-btn" data-key="D">D</button>
+      <button type="button" class="key-btn" data-key="F">F</button>
+      <button type="button" class="key-btn" data-key="G">G</button>
+      <button type="button" class="key-btn" data-key="H">H</button>
+      <button type="button" class="key-btn" data-key="J">J</button>
+      <button type="button" class="key-btn" data-key="K">K</button>
+      <button type="button" class="key-btn" data-key="L">L</button>
+    </div>
+    <div class="keyboard-row">
+      <button type="button" class="key-btn key-wide" data-key="ENTER" id="keyEnter">Submit</button>
+      <button type="button" class="key-btn" data-key="Z">Z</button>
+      <button type="button" class="key-btn" data-key="X">X</button>
+      <button type="button" class="key-btn" data-key="C">C</button>
+      <button type="button" class="key-btn" data-key="V">V</button>
+      <button type="button" class="key-btn" data-key="B">B</button>
+      <button type="button" class="key-btn" data-key="N">N</button>
+      <button type="button" class="key-btn" data-key="M">M</button>
+      <button type="button" class="key-btn key-wide" data-key="BACKSPACE" id="keyBackspace">Backspace</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="gameModal">
+  <div class="modal-dialog">
+    <h2 class="modal-title" id="modalTitle">Game Over</h2>
+    <p class="modal-body" id="modalMessage"></p>
+    <div style="display: flex; gap: 0.75rem; justify-content: center;">
+      <button type="button" class="btn btn-outline" id="modalCloseBtn">View Board</button>
+      <a href="{% url 'dashboard' %}" class="btn btn-primary" id="modalOkBtn">OK</a>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  (function () {
+    const sessionId = Number("{{ session.id }}");
+    let gameStatus = "{{ game_status }}";
+    let attemptsUsed = Number("{{ session.attempts_used }}");
+    const maxAttempts = Number("{{ session.max_attempts }}");
+    let currentInput = "";
+    let isSubmitting = false;
+
+    const initialKeyStatuses = JSON.parse('{{ keyboard_statuses_json|escapejs }}' || '{}');
+
+    const boardGrid = document.getElementById('boardGrid');
+    const attemptDisplay = document.getElementById('attemptDisplay');
+    const gameModal = document.getElementById('gameModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalMessage = document.getElementById('modalMessage');
+    const modalCloseBtn = document.getElementById('modalCloseBtn');
+
+    if (modalCloseBtn) {
+      modalCloseBtn.addEventListener('click', function () {
+        gameModal.classList.remove('show');
+      });
+    }
+
+    if (gameModal) {
+      gameModal.addEventListener('click', function (e) {
+        if (e.target === gameModal) {
+          gameModal.classList.remove('show');
+        }
+      });
+    }
+
+    function getCsrfToken() {
+      const cookieValue = document.cookie
+        .split('; ')
+        .find(row => row.startsWith('csrftoken='))
+        ?.split('=')[1];
+      return cookieValue || '{{ csrf_token }}';
+    }
+
+    function updateKeyboardKey(letter, status) {
+      const keyBtn = document.querySelector(`.key-btn[data-key="${letter}"]`);
+      if (!keyBtn) return;
+
+      const priority = { 'green': 3, 'yellow': 2, 'grey': 1 };
+      const currentStatus = keyBtn.getAttribute('data-status') || '';
+
+      if (!currentStatus || priority[status] > (priority[currentStatus] || 0)) {
+        keyBtn.setAttribute('data-status', status);
+        keyBtn.className = `key-btn ${status === 'green' ? 'key-green' : status === 'yellow' ? 'key-yellow' : 'key-grey'}`;
+        if (letter === 'ENTER' || letter === 'BACKSPACE') {
+          keyBtn.classList.add('key-wide');
+        }
+      }
+    }
+
+    for (const [letter, status] of Object.entries(initialKeyStatuses)) {
+      updateKeyboardKey(letter, status);
+    }
+
+    function updateCurrentRow() {
+      if (gameStatus !== 'IN_PROGRESS' || attemptsUsed >= maxAttempts) return;
+      const row = boardGrid.querySelector(`.board-row[data-row="${attemptsUsed}"]`);
+      if (!row) return;
+
+      const tiles = row.querySelectorAll('.tile');
+      for (let i = 0; i < 5; i++) {
+        const tile = tiles[i];
+        if (i < currentInput.length) {
+          tile.textContent = currentInput[i];
+          tile.setAttribute('data-status', 'filled');
+        } else {
+          tile.textContent = '';
+          tile.removeAttribute('data-status');
+        }
+      }
+    }
+
+    function handleLetter(char) {
+      if (gameStatus !== 'IN_PROGRESS' || isSubmitting) return;
+      if (currentInput.length < 5) {
+        currentInput += char.toUpperCase();
+        updateCurrentRow();
+      }
+    }
+
+    function handleBackspace() {
+      if (gameStatus !== 'IN_PROGRESS' || isSubmitting) return;
+      if (currentInput.length > 0) {
+        currentInput = currentInput.slice(0, -1);
+        updateCurrentRow();
+      }
+    }
+
+    function showModal(title, message) {
+      modalTitle.textContent = title;
+      modalMessage.textContent = message;
+      gameModal.classList.add('show');
+    }
+
+    async function handleSubmit() {
+      if (gameStatus !== 'IN_PROGRESS' || isSubmitting) return;
+
+      if (currentInput.length !== 5) {
+        alert("Please enter a 5-letter word.");
+        return;
+      }
+
+      isSubmitting = true;
+
+      try {
+        const response = await fetch("{% url 'submit_guess' %}", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCsrfToken()
+          },
+          body: JSON.stringify({
+            session_id: sessionId,
+            guess_word: currentInput
+          })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || data.error) {
+          alert(data.error || "An error occurred while submitting your guess.");
+          isSubmitting = false;
+          return;
+        }
+
+        const currentRowElem = boardGrid.querySelector(`.board-row[data-row="${attemptsUsed}"]`);
+        const tiles = currentRowElem.querySelectorAll('.tile');
+
+        data.evaluation.forEach((item, index) => {
+          setTimeout(() => {
+            const tile = tiles[index];
+            tile.classList.add('flip');
+            tile.textContent = item.letter;
+            tile.setAttribute('data-status', item.status);
+            tile.className = `tile tile-${item.status} flip`;
+          }, index * 100);
+        });
+
+        setTimeout(() => {
+          for (const [letter, status] of Object.entries(data.keyboard_statuses)) {
+            updateKeyboardKey(letter, status);
+          }
+        }, 500);
+
+        attemptsUsed = data.attempts_used;
+        attemptDisplay.textContent = attemptsUsed;
+        gameStatus = data.status;
+        currentInput = "";
+
+        if (data.is_game_over) {
+          setTimeout(() => {
+            showModal(data.modal_title, data.modal_message);
+          }, 800);
+        }
+
+      } catch (err) {
+        console.error("Submission error:", err);
+        alert("Failed to submit guess. Please try again.");
+      } finally {
+        isSubmitting = false;
+      }
+    }
+
+    document.addEventListener('keydown', function (e) {
+      if (gameStatus !== 'IN_PROGRESS' || isSubmitting) return;
+
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        handleSubmit();
+      } else if (e.key === 'Backspace') {
+        e.preventDefault();
+        handleBackspace();
+      } else if (/^[a-zA-Z]$/.test(e.key)) {
+        e.preventDefault();
+        handleLetter(e.key);
+      }
+    });
+
+    const virtualKeyboard = document.getElementById('virtualKeyboard');
+    virtualKeyboard.addEventListener('click', function (e) {
+      const btn = e.target.closest('.key-btn');
+      if (!btn) return;
+
+      const key = btn.getAttribute('data-key');
+      if (key === 'ENTER') {
+        handleSubmit();
+      } else if (key === 'BACKSPACE') {
+        handleBackspace();
+      } else if (key && /^[A-Z]$/.test(key)) {
+        handleLetter(key);
+      }
+    });
+  })();
+</script>
+{% endblock %}

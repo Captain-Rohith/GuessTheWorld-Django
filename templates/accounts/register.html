@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}Player Registration{% endblock %}
+
+{% block content %}
+<div class="card auth-card">
+  <div class="card-header">
+    <h1 class="card-title">Player Registration</h1>
+    <p class="card-subtitle">Create a player account to begin guessing words</p>
+  </div>
+
+  <form method="post" action="{% url 'register' %}" novalidate>
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+      <div class="alert alert-error">
+        {% for error in form.non_field_errors %}
+          <div>{{ error }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <div class="form-group">
+      <label for="id_username" class="form-label">Username</label>
+      {{ form.username }}
+      <div class="form-help">{{ form.username.help_text }}</div>
+      {% if form.username.errors %}
+        <div class="form-error">{{ form.username.errors.0 }}</div>
+      {% endif %}
+    </div>
+
+    <div class="form-group">
+      <label for="id_password" class="form-label">Password</label>
+      {{ form.password }}
+      <div class="form-help">{{ form.password.help_text }}</div>
+      {% if form.password.errors %}
+        <div class="form-error">{{ form.password.errors.0 }}</div>
+      {% endif %}
+    </div>
+
+    <div class="form-group">
+      <label for="id_confirm_password" class="form-label">Confirm Password</label>
+      {{ form.confirm_password }}
+      {% if form.confirm_password.errors %}
+        <div class="form-error">{{ form.confirm_password.errors.0 }}</div>
+      {% endif %}
+    </div>
+
+    <div class="form-group">
+      <label class="checkbox-group">
+        <input type="checkbox" id="togglePasswordVisibility">
+        <span>Show password</span>
+      </label>
+    </div>
+
+    <button type="submit" class="btn btn-primary btn-block" style="margin-top: 1rem;">Register</button>
+  </form>
+
+  <div style="text-align: center; margin-top: 1.5rem; font-size: 0.9rem; color: var(--text-muted);">
+    Already have an account? <a href="{% url 'login' %}" style="color: var(--text-main); font-weight: 600;">Login</a>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const toggleCheckbox = document.getElementById('togglePasswordVisibility');
+    const passwordFields = document.querySelectorAll('.password-field');
+
+    if (toggleCheckbox) {
+      toggleCheckbox.addEventListener('change', function () {
+        passwordFields.forEach(function (field) {
+          field.type = toggleCheckbox.checked ? 'text' : 'password';
+        });
+      });
+    }
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,724 @@
+/* ==========================================================================
+   Wordle Web Application - Design System & Stylesheet
+   Theme: Minimal Crisp Light Theme
+   ========================================================================== */
+
+:root {
+  --bg-main: #f6f7f9;
+  --bg-card: #ffffff;
+  --text-main: #1a1a1b;
+  --text-muted: #6b7280;
+  --text-light: #ffffff;
+
+  /* Wordle Color Tokens */
+  --color-green: #6aaa64;
+  --color-yellow: #c9b458;
+  --color-grey: #787c7e;
+  --color-border: #d3d6da;
+  --color-border-active: #878a8c;
+  --color-key-bg: #d3d6da;
+  --color-key-hover: #b9bdc3;
+
+  /* UI Tokens */
+  --primary: #1a1a1b;
+  --primary-hover: #333334;
+  --danger: #dc2626;
+  --danger-hover: #b91c1c;
+  --success: #6aaa64;
+  --warning: #c9b458;
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+
+  --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  font-family: var(--font-family);
+  line-height: 1.5;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* --------------------------------------------------------------------------
+   Layout & Container (Horizontally Centered at All Resolutions)
+   -------------------------------------------------------------------------- */
+.app-header {
+  background-color: var(--bg-card);
+  border-bottom: 1px solid var(--color-border);
+  padding: 0.85rem 1.5rem;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  box-shadow: var(--shadow-sm);
+}
+
+.header-container {
+  max-width: 1080px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.brand-title {
+  font-size: 1.4rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  color: var(--text-main);
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.brand-title span {
+  color: var(--color-green);
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.nav-user-info {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.nav-user-role {
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 2rem 1rem;
+  width: 100%;
+}
+
+.content-container {
+  width: 100%;
+  max-width: 1080px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.footer {
+  text-align: center;
+  padding: 1.25rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  border-top: 1px solid var(--color-border);
+  background-color: var(--bg-card);
+}
+
+/* --------------------------------------------------------------------------
+   Alerts & Notification Messages
+   -------------------------------------------------------------------------- */
+.messages-container {
+  width: 100%;
+  max-width: 600px;
+  margin-bottom: 1.5rem;
+}
+
+.alert {
+  padding: 0.85rem 1.25rem;
+  border-radius: var(--radius-md);
+  margin-bottom: 0.75rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  border: 1px solid transparent;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.alert-success {
+  background-color: #eef7ee;
+  color: #2b6127;
+  border-color: #b7e0b5;
+}
+
+.alert-error, .alert-danger {
+  background-color: #fef2f2;
+  color: #991b1b;
+  border-color: #fecaca;
+}
+
+.alert-info {
+  background-color: #f0f9ff;
+  color: #0369a1;
+  border-color: #bae6fd;
+}
+
+.alert-warning {
+  background-color: #fefce8;
+  color: #854d0e;
+  border-color: #fef08a;
+}
+
+/* --------------------------------------------------------------------------
+   Cards, Forms & Controls
+   -------------------------------------------------------------------------- */
+.card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  box-shadow: var(--shadow-sm);
+  width: 100%;
+}
+
+.auth-card {
+  max-width: 440px;
+  margin: 1.5rem auto;
+}
+
+.card-header {
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.card-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.card-subtitle {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin-top: 0.25rem;
+}
+
+.form-group {
+  margin-bottom: 1.25rem;
+  text-align: left;
+}
+
+.form-label {
+  display: block;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 0.4rem;
+  color: var(--text-main);
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  color: var(--text-main);
+  background-color: #ffffff;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--text-main);
+  box-shadow: 0 0 0 2px rgba(26, 26, 27, 0.1);
+}
+
+.form-help {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 0.35rem;
+  line-height: 1.35;
+}
+
+.form-error {
+  font-size: 0.82rem;
+  color: var(--danger);
+  margin-top: 0.35rem;
+  font-weight: 500;
+}
+
+.checkbox-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.checkbox-group input[type="checkbox"] {
+  width: 1rem;
+  height: 1rem;
+  accent-color: var(--text-main);
+  cursor: pointer;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.15s ease, transform 0.05s ease;
+  user-select: none;
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn-primary {
+  background-color: var(--primary);
+  color: var(--text-light);
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-hover);
+}
+
+.btn-success {
+  background-color: var(--color-green);
+  color: var(--text-light);
+}
+
+.btn-success:hover {
+  background-color: #599653;
+}
+
+.btn-danger {
+  background-color: var(--danger);
+  color: var(--text-light);
+}
+
+.btn-danger:hover {
+  background-color: var(--danger-hover);
+}
+
+.btn-secondary {
+  background-color: #e5e7eb;
+  color: var(--text-main);
+}
+
+.btn-secondary:hover {
+  background-color: #d1d5db;
+}
+
+.btn-outline {
+  background-color: transparent;
+  border-color: var(--color-border);
+  color: var(--text-main);
+}
+
+.btn-outline:hover {
+  background-color: #f3f4f6;
+  border-color: var(--color-border-active);
+}
+
+.btn-block {
+  width: 100%;
+}
+
+.btn:disabled, .btn.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* --------------------------------------------------------------------------
+   Tabs Navigation (Admin Control Center)
+   -------------------------------------------------------------------------- */
+.admin-tabs {
+  display: flex;
+  gap: 0.5rem;
+  border-bottom: 2px solid var(--color-border);
+  width: 100%;
+  margin-bottom: 2rem;
+}
+
+.admin-tab-item {
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.admin-tab-item:hover {
+  color: var(--text-main);
+}
+
+.admin-tab-item.active {
+  color: var(--text-main);
+  border-bottom: 3px solid var(--text-main);
+}
+
+/* --------------------------------------------------------------------------
+   Summary Metric Cards
+   -------------------------------------------------------------------------- */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.25rem;
+  width: 100%;
+  margin-bottom: 2rem;
+}
+
+.metric-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+}
+
+.metric-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+}
+
+.metric-value {
+  font-size: 1.85rem;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+/* --------------------------------------------------------------------------
+   Tables
+   -------------------------------------------------------------------------- */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--bg-card);
+  box-shadow: var(--shadow-sm);
+}
+
+.custom-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.95rem;
+}
+
+.custom-table th {
+  background-color: #f9fafb;
+  font-weight: 700;
+  color: var(--text-main);
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.custom-table td {
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid #f0f1f3;
+  color: var(--text-main);
+}
+
+.custom-table tr:last-child td {
+  border-bottom: none;
+}
+
+.custom-table tr:hover td {
+  background-color: #fafbfc;
+}
+
+/* --------------------------------------------------------------------------
+   Badges
+   -------------------------------------------------------------------------- */
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.65rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  border-radius: var(--radius-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.badge-green {
+  background-color: var(--color-green);
+  color: var(--text-light);
+}
+
+.badge-yellow {
+  background-color: var(--color-yellow);
+  color: var(--text-light);
+}
+
+.badge-grey {
+  background-color: var(--color-grey);
+  color: var(--text-light);
+}
+
+.badge-in-progress {
+  background-color: #e5e7eb;
+  color: var(--text-main);
+}
+
+.badge-inactive {
+  background-color: #f3f4f6;
+  color: var(--text-muted);
+  border: 1px solid var(--color-border);
+}
+
+/* --------------------------------------------------------------------------
+   Wordle Game Board & Virtual Keyboard
+   -------------------------------------------------------------------------- */
+.game-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.game-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.game-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.board-grid {
+  display: grid;
+  grid-template-rows: repeat(5, 1fr);
+  gap: 6px;
+  margin-bottom: 1.75rem;
+  user-select: none;
+}
+
+.board-row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+}
+
+.tile {
+  width: 60px;
+  height: 60px;
+  border: 2px solid var(--color-border);
+  background-color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--text-main);
+  transition: transform 0.15s ease;
+  user-select: none;
+}
+
+.tile[data-status="filled"] {
+  border-color: var(--color-border-active);
+  animation: popIn 0.1s ease-in-out;
+}
+
+.tile[data-status="green"], .tile.tile-green {
+  background-color: var(--color-green);
+  border-color: var(--color-green);
+  color: var(--text-light);
+}
+
+.tile[data-status="yellow"], .tile.tile-yellow {
+  background-color: var(--color-yellow);
+  border-color: var(--color-yellow);
+  color: var(--text-light);
+}
+
+.tile[data-status="grey"], .tile.tile-grey {
+  background-color: var(--color-grey);
+  border-color: var(--color-grey);
+  color: var(--text-light);
+}
+
+@keyframes popIn {
+  0% { transform: scale(0.9); }
+  50% { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+
+@keyframes flipTile {
+  0% { transform: rotateX(0); }
+  50% { transform: rotateX(90deg); }
+  100% { transform: rotateX(0); }
+}
+
+.tile.flip {
+  animation: flipTile 0.5s ease;
+}
+
+/* --------------------------------------------------------------------------
+   Virtual Keyboard
+   -------------------------------------------------------------------------- */
+.virtual-keyboard {
+  width: 100%;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  user-select: none;
+}
+
+.keyboard-row {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+  width: 100%;
+}
+
+.key-btn {
+  height: 54px;
+  background-color: var(--color-key-bg);
+  border: none;
+  border-radius: var(--radius-sm);
+  color: var(--text-main);
+  font-size: 0.95rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex: 1;
+  text-transform: uppercase;
+  transition: background-color 0.15s ease;
+}
+
+.key-btn:hover {
+  background-color: var(--color-key-hover);
+}
+
+.key-btn.key-wide {
+  flex: 1.5;
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+}
+
+.key-btn[data-status="green"], .key-btn.key-green {
+  background-color: var(--color-green);
+  color: var(--text-light);
+}
+
+.key-btn[data-status="yellow"], .key-btn.key-yellow {
+  background-color: var(--color-yellow);
+  color: var(--text-light);
+}
+
+.key-btn[data-status="grey"], .key-btn.key-grey {
+  background-color: var(--color-grey);
+  color: var(--text-light);
+}
+
+/* --------------------------------------------------------------------------
+   Modal Dialog
+   -------------------------------------------------------------------------- */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.modal-backdrop.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-dialog {
+  background-color: #ffffff;
+  border-radius: var(--radius-lg);
+  padding: 2.25rem 2rem;
+  max-width: 420px;
+  width: 90%;
+  text-align: center;
+  box-shadow: var(--shadow-lg);
+  transform: translateY(20px);
+  transition: transform 0.2s ease;
+}
+
+.modal-backdrop.show .modal-dialog {
+  transform: translateY(0);
+}
+
+.modal-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin-bottom: 0.75rem;
+  color: var(--text-main);
+}
+
+.modal-body {
+  font-size: 1.05rem;
+  color: var(--text-muted);
+  margin-bottom: 1.75rem;
+  line-height: 1.4;
+}
+
+/* --------------------------------------------------------------------------
+   Responsive Rules
+   -------------------------------------------------------------------------- */
+@media (max-width: 600px) {
+  .tile {
+    width: 48px;
+    height: 48px;
+    font-size: 1.6rem;
+  }
+  .key-btn {
+    height: 46px;
+    font-size: 0.85rem;
+  }
+  .key-btn.key-wide {
+    font-size: 0.7rem;
+  }
+}

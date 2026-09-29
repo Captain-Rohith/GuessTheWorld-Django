@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Control Center{% endblock %}
+
+{% block content %}
+<div style="width: 100%; max-width: 960px;">
+  <div style="margin-bottom: 1.5rem;">
+    <h1 style="font-size: 1.85rem; font-weight: 800; color: var(--text-main);">Admin Control Center</h1>
+    <p style="color: var(--text-muted); font-size: 0.95rem;">System reports, user analytics, and word pool management</p>
+  </div>
+
+  <nav class="admin-tabs">
+    <a href="{% url 'admin_daily_report' %}" class="admin-tab-item {% if active_tab == 'daily' %}active{% endif %}">
+      Daily Report
+    </a>
+    <a href="{% url 'admin_user_report' %}" class="admin-tab-item {% if active_tab == 'users' %}active{% endif %}">
+      User Performance Report
+    </a>
+    <a href="{% url 'admin_word_pool' %}" class="admin-tab-item {% if active_tab == 'words' %}active{% endif %}">
+      Word Pool Management
+    </a>
+  </nav>
+
+  {% block admin_content %}{% endblock %}
+</div>
+{% endblock %}

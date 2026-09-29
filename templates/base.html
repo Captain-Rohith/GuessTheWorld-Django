@@ -1,0 +1,58 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Word Guessing Game{% endblock %} - GuessTheWorld</title>
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-container">
+      <a href="{% if user.is_authenticated %}{% if user.is_admin %}{% url 'admin_daily_report' %}{% else %}{% url 'dashboard' %}{% endif %}{% else %}{% url 'login' %}{% endif %}" class="brand-title">
+        GUESS<span>THE</span>WORLD
+      </a>
+      <nav class="nav-links">
+        {% if user.is_authenticated %}
+          <span class="nav-user-info">
+            {{ user.username }} (<span class="nav-user-role">{{ user.role }}</span>)
+          </span>
+          {% if user.is_admin %}
+            <a href="{% url 'admin_daily_report' %}" class="btn btn-outline" style="padding: 0.4rem 0.85rem; font-size: 0.85rem;">Admin Panel</a>
+          {% else %}
+            <a href="{% url 'dashboard' %}" class="btn btn-outline" style="padding: 0.4rem 0.85rem; font-size: 0.85rem;">Dashboard</a>
+          {% endif %}
+          <a href="{% url 'logout' %}" class="btn btn-secondary" style="padding: 0.4rem 0.85rem; font-size: 0.85rem;">Logout</a>
+        {% else %}
+          <a href="{% url 'login' %}" class="btn btn-outline" style="padding: 0.4rem 0.85rem; font-size: 0.85rem;">Login</a>
+          <a href="{% url 'register' %}" class="btn btn-primary" style="padding: 0.4rem 0.85rem; font-size: 0.85rem;">Register</a>
+        {% endif %}
+      </nav>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <div class="content-container">
+      {% if messages %}
+        <div class="messages-container">
+          {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+              <span>{{ message }}</span>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      {% block content %}{% endblock %}
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p>&copy; GuessTheWorld</p>
+  </footer>
+
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

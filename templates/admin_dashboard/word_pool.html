@@ -1,0 +1,98 @@
+{% extends "admin_dashboard/base_admin.html" %}
+
+{% block title %}Word Pool Management - Admin{% endblock %}
+
+{% block admin_content %}
+<div class="card" style="padding: 1.5rem; margin-bottom: 1.5rem;">
+  <h2 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--text-main);">Add New Word</h2>
+  <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1rem;">
+    Enter a 5-letter English word. It will automatically be converted to uppercase.
+  </p>
+
+  <form method="post" action="{% url 'admin_word_pool' %}" style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+    {% csrf_token %}
+    <div style="flex: 1; min-width: 200px;">
+      <input type="text" name="word" maxlength="5" minlength="5" placeholder="e.g. FLASH" required class="form-input" style="text-transform: uppercase; font-weight: 600; letter-spacing: 0.1em;">
+    </div>
+    <button type="submit" class="btn btn-primary">Add Word</button>
+  </form>
+</div>
+
+<div class="metrics-grid">
+  <div class="metric-card">
+    <div class="metric-title">Total Words</div>
+    <div class="metric-value">{{ total_words }}</div>
+  </div>
+  <div class="metric-card">
+    <div class="metric-title">Active Words</div>
+    <div class="metric-value" style="color: var(--color-green);">{{ active_count }}</div>
+  </div>
+  <div class="metric-card">
+    <div class="metric-title">Inactive Words</div>
+    <div class="metric-value" style="color: var(--text-muted);">{{ inactive_count }}</div>
+  </div>
+</div>
+
+<div class="card" style="padding: 1.5rem;">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+    <h2 style="font-size: 1.2rem; font-weight: 700; color: var(--text-main);">Word Pool Repository</h2>
+    <span style="font-size: 0.85rem; color: var(--text-muted);">{{ words|length }} word(s)</span>
+  </div>
+
+  <div class="table-responsive">
+    <table class="custom-table">
+      <thead>
+        <tr>
+          <th>Word</th>
+          <th>Status</th>
+          <th>Created At</th>
+          <th style="text-align: right;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for w in words %}
+          <tr>
+            <td style="font-weight: 800; letter-spacing: 0.15em; font-size: 1.05rem;">{{ w.word }}</td>
+            <td>
+              {% if w.is_active %}
+                <span class="badge badge-green">Active</span>
+              {% else %}
+                <span class="badge badge-inactive">Inactive</span>
+              {% endif %}
+            </td>
+            <td>{{ w.created_at|date:"Y-m-d H:i" }}</td>
+            <td style="text-align: right;">
+              <div style="display: inline-flex; gap: 0.5rem; justify-content: flex-end;">
+                <form method="post" action="{% url 'admin_toggle_word' word_id=w.id %}" style="display: inline;">
+                  {% csrf_token %}
+                  {% if w.is_active %}
+                    <button type="submit" class="btn btn-outline" style="padding: 0.3rem 0.65rem; font-size: 0.8rem;">
+                      Disable
+                    </button>
+                  {% else %}
+                    <button type="submit" class="btn btn-success" style="padding: 0.3rem 0.65rem; font-size: 0.8rem;">
+                      Enable
+                    </button>
+                  {% endif %}
+                </form>
+                <form method="post" action="{% url 'admin_delete_word' word_id=w.id %}" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this word?');">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-danger" style="padding: 0.3rem 0.65rem; font-size: 0.8rem;">
+                    Delete
+                  </button>
+                </form>
+              </div>
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="4" style="text-align: center; color: var(--text-muted); padding: 2rem;">
+              No words in the pool yet. Add one using the form above!
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
